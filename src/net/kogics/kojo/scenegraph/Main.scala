@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2015 Lalit Pant <pant.lalit@gmail.com>
+ *
+ * The contents of this file are subject to the GNU General Public License
+ * Version 3 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.gnu.org/copyleft/gpl.html
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ */
+
 package net.kogics.kojo.scenegraph
 
 import java.awt._
@@ -35,7 +50,7 @@ object Main {
 
 
       val t1 = System.nanoTime()
-      val sceneRoot = drawing(20)
+      val sceneRoot = drawing(15)
       //      val rect = PicShape.rect(100, 100)
       //      val sceneRoot = Stroke(Color.yellow, Stack(Vector(
       //        Translate(-200, 0, Brighten(-0.5, Fill(new Color(0, 94, 0), rect))),
@@ -95,8 +110,8 @@ class SwingRenderer {
     override def getPreferredSize = dims
 
     val backBuffer: Image = {
-      val graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().
-        getDefaultScreenDevice().getDefaultConfiguration()
+      val graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment.
+        getDefaultScreenDevice.getDefaultConfiguration
       graphicsConfiguration.createCompatibleImage(cwidth, cheight, Transparency.OPAQUE)
       //      new BufferedImage(cwidth, cheight, BufferedImage.TYPE_INT_ARGB);
     }
@@ -110,10 +125,10 @@ class SwingRenderer {
       else {
         g.asInstanceOf[Graphics2D]
       }
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-      g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+      g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
+      g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
       g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE)
       g2.setPaint(bg)
       g2.fillRect(0, 0, cwidth, cheight)
@@ -142,7 +157,7 @@ class SwingRenderer {
 
   var rdCount = 0
 
-  def draw(p: Picture, g: Graphics2D): Unit = p match {
+  def draw(pic: Picture, g: Graphics2D): Unit = pic match {
     case Rectangle(h, w) =>
       //      rdCount += 1
       //      println(s"Drawing Rect ($rdCount)")
@@ -157,7 +172,7 @@ class SwingRenderer {
     case null =>
   }
 
-  def fill(p: Picture, g: Graphics2D): Unit = p match {
+  def fill(pic: Picture, g: Graphics2D): Unit = pic match {
     case Rectangle(h, w) =>
       g.fillRect(0, 0, w.toInt, h.toInt)
     case _ =>
@@ -178,7 +193,7 @@ class SwingRenderer {
   }
 
   def restorePaint(g: Graphics2D): Unit = {
-    g.setPaint(savedPaints.pop)
+    g.setPaint(savedPaints.pop())
   }
 
   def saveTransform(g: Graphics2D): Unit = {
@@ -186,7 +201,7 @@ class SwingRenderer {
   }
 
   def restoreTransform(g: Graphics2D): Unit = {
-    g.setTransform(savedTransforms.pop)
+    g.setTransform(savedTransforms.pop())
   }
 
   def pushBrighten(f: Double): Unit = {

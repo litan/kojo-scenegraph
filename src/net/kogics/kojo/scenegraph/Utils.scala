@@ -1,16 +1,28 @@
+/*
+ * Copyright (C) 2011 Lalit Pant <pant.lalit@gmail.com>
+ *
+ * The contents of this file are subject to the GNU General Public License
+ * Version 3 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.gnu.org/copyleft/gpl.html
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ */
+
 package net.kogics.kojo.scenegraph
 
 import java.awt.{Color, EventQueue}
 import java.util
 import java.util.concurrent.locks.ReentrantLock
 
-/**
- * Created by lalit on 9/21/15.
- */
 object Utils {
   def runLaterInSwingThread(fn: => Unit) {
     javax.swing.SwingUtilities.invokeLater(new Runnable {
-      override def run {
+      override def run() {
         fn
       }
     })
@@ -35,10 +47,10 @@ object Utils {
           notFull.await()
         }
         val needDrainer = batchQ.isEmpty
-        batchQ.add(fn _)
+        batchQ.add(() => fn)
         if (needDrainer) {
           javax.swing.SwingUtilities.invokeLater(new Runnable {
-            override def run {
+            override def run() {
               batchLock.lock()
               while (!batchQ.isEmpty) {
                 try {
@@ -70,7 +82,7 @@ object Utils {
     else {
       var t: T = null.asInstanceOf[T]
       javax.swing.SwingUtilities.invokeAndWait(new Runnable {
-        override def run {
+        override def run() {
           t = fn
         }
       })
@@ -82,7 +94,7 @@ object Utils {
     println(s"Problem - ${t.toString} (see log for details)")
   }
 
-  private def rgbaComps(color: Color) = (color.getRed, color.getGreen, color.getBlue, color.getAlpha())
+  private def rgbaComps(color: Color) = (color.getRed, color.getGreen, color.getBlue, color.getAlpha)
 
   def checkHsbModFactor(f: Double) {
     if (f < -1 || f > 1) {
