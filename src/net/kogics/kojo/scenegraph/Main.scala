@@ -16,8 +16,9 @@
 package net.kogics.kojo.scenegraph
 
 import java.awt._
-import java.awt.geom.AffineTransform
+import java.awt.geom.{Ellipse2D, Rectangle2D, AffineTransform}
 import javax.swing.{JFrame, JPanel}
+import Utils._
 
 import scala.collection.mutable
 
@@ -31,40 +32,17 @@ object Main {
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
       frame.setSize(1024, 768)
 
-      val noColor = new Color(0, 0, 0, 0)
-      val size = 100
-      val S = PicShape.rect(size, 100)
-      val stem = Scale(0.13, 1, Stroke(noColor, Fill(Color.black, S)))
-      def drawing(n: Int): Picture = {
-        if (n == 1)
-          stem
-        else
-          Stack(Vector(stem,
-            Translate(0, size - 5, Brighten(0.05, Stack(Vector(
-              Rotate(25, Scale(0.72, 0.72, drawing(n - 1))),
-              Rotate(-50, Scale(0.55, 0.55, drawing(n - 1)))
-            )))))
-          )
-      }
-
-
 
       val t1 = System.nanoTime()
-      val sceneRoot = drawing(15)
-      //      val rect = PicShape.rect(100, 100)
-      //      val sceneRoot = Stroke(Color.yellow, Stack(Vector(
-      //        Translate(-200, 0, Brighten(-0.5, Fill(new Color(0, 94, 0), rect))),
-      //        Translate(0, 0, Brighten(0, Fill(new Color(0, 94, 0), rect))),
-      //        Translate(200, 0, Brighten(0.5, Fill(new Color(0, 94, 0), rect)))
-      //      )))
+      val sceneRoot = TestDrawing.drawing2(7)
       val t2 = System.nanoTime()
       println(s"Scene creation time: ${(t2 - t1) / 1e9}")
 
 
       val renderer = new SwingRenderer
       frame.getContentPane.add(renderer.canvas)
-      frame.setVisible(true)
       renderer.render(sceneRoot)
+      frame.setVisible(true)
     }
   }
 }
@@ -72,6 +50,8 @@ object Main {
 
 object PicShape {
   def rect(h: Double, w: Double): Rectangle = Rectangle(h, w)
+
+  def circle(r: Double): Circle = Circle(r)
 }
 
 trait Picture {
@@ -79,6 +59,8 @@ trait Picture {
 }
 
 case class Rectangle(h: Double, w: Double) extends Picture
+
+case class Circle(r: Double) extends Picture
 
 case class Stack(ps: Seq[Picture]) extends Picture
 
@@ -152,16 +134,18 @@ class SwingRenderer {
 
   def render(p: Picture): Unit = {
     root = p
-    canvas.invalidate()
+    //    canvas.invalidate()
   }
 
   var rdCount = 0
 
   def draw(pic: Picture, g: Graphics2D): Unit = pic match {
     case Rectangle(h, w) =>
-      //      rdCount += 1
-      //      println(s"Drawing Rect ($rdCount)")
-      g.drawRect(0, 0, w.toInt, h.toInt)
+      val shape = new Rectangle2D.Double(0, 0, w, h)
+      g.draw(shape)
+    case Circle(r) =>
+      val shape = new Ellipse2D.Double(0, 0, r * 2, r * 2)
+      g.draw(shape)
     case Stack(ps) => ps foreach (draw(_, g))
     case Translate(x, y, p) => saveTransform(g); g.translate(x, y); draw(p, g); restoreTransform(g)
     case Rotate(a, p) => saveTransform(g); g.rotate(a.toRadians); draw(p, g); restoreTransform(g)
@@ -174,7 +158,11 @@ class SwingRenderer {
 
   def fill(pic: Picture, g: Graphics2D): Unit = pic match {
     case Rectangle(h, w) =>
-      g.fillRect(0, 0, w.toInt, h.toInt)
+      val shape = new Rectangle2D.Double(0, 0, w, h)
+      g.fill(shape)
+    case Circle(r) =>
+      val shape = new Ellipse2D.Double(0, 0, r * 2, r * 2)
+      g.fill(shape)
     case _ =>
   }
 
