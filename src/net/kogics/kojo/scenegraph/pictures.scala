@@ -41,10 +41,6 @@ case class PicStack[T <: AnyDrawing](ps: Vector[Picture[T]]) extends Picture[T]
 
 trait Transform[T <: AnyDrawing] extends Picture[T] {
   def pic: Picture[T]
-
-  //  def *(other: Transform) = {
-  //
-  //  }
 }
 
 trait VectorTransform extends VectorPicture with Transform[VectorDrawing] {
@@ -55,15 +51,67 @@ trait RasterTransform extends RasterPicture with Transform[RasterDrawing] {
   //  def pic: RasterPicture
 }
 
+trait TransformOp[T <: AnyDrawing] {
+  self =>
+  def *(other: TransformOp[T]): TransformOp[T] = new TransformOp[T] {
+    def ->(pic: Picture[T]): Picture[T] = {
+      self -> (other -> pic)
+    }
+
+  }
+
+  def ->(pic: Picture[T]): Picture[T]
+
+  def -->(pic: Picture[T]): Picture[T] = ->(pic)
+}
+
 case class Translate[T <: AnyDrawing](x: Double, y: Double, pic: Picture[T]) extends Transform[T]
+
+case class trans[T <: AnyDrawing](x: Double, y: Double) extends TransformOp[T] {
+  def ->(pic: Picture[T]): Picture[T] = {
+    Translate(x, y, pic)
+  }
+}
+
 
 case class Rotate[T <: AnyDrawing](a: Double, pic: Picture[T]) extends Transform[T]
 
-case class Scale[T <: AnyDrawing](fx: Double, fy: Double, pic: Picture[T]) extends Transform[T]
+case class rot[T <: AnyDrawing](a: Double) extends TransformOp[T] {
+  def ->(pic: Picture[T]): Picture[T] = {
+    Rotate(a, pic)
+  }
+}
+
+case class ScaleXY[T <: AnyDrawing](fx: Double, fy: Double, pic: Picture[T]) extends Transform[T]
+
+case class scale[T <: AnyDrawing](fx: Double, fy: Double) extends TransformOp[T] {
+  def ->(pic: Picture[T]): Picture[T] = {
+    ScaleXY(fx, fy, pic)
+  }
+}
 
 case class Stroke(c: Color, pic: VectorPicture) extends VectorTransform
 
+case class penColor(c: Color) extends TransformOp[VectorDrawing] {
+  def ->(pic: VectorPicture): VectorPicture = {
+    Stroke(c, pic)
+  }
+}
+
 case class Fill(c: Color, pic: VectorPicture) extends VectorTransform
 
+case class fillColor(c: Color) extends TransformOp[VectorDrawing] {
+  def ->(pic: VectorPicture): VectorPicture = {
+    Fill(c, pic)
+  }
+}
+
 case class Brighten(f: Double, pic: VectorPicture) extends VectorTransform
+
+case class brit(f: Double) extends TransformOp[VectorDrawing] {
+  def ->(pic: VectorPicture): VectorPicture = {
+    Brighten(f, pic)
+  }
+}
+
 

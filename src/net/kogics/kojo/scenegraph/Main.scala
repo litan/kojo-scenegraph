@@ -29,7 +29,7 @@ object Main {
 
 
       val t1 = System.nanoTime()
-      val sceneRoot = TestDrawing.drawing2(8)
+      val sceneRoot = TestDrawingDsl.drawing1(15)
       val t2 = System.nanoTime()
       println(s"Scene creation time: ${(t2 - t1) / 1e9}")
 
