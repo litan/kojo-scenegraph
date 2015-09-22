@@ -93,7 +93,7 @@ class SwingRenderer {
     case PicStack(ps) => ps foreach (draw(_, g))
     case Translate(x, y, p) => saveTransform(g); g.translate(x, y); draw(p, g); restoreTransform(g)
     case Rotate(a, p) => saveTransform(g); g.rotate(a.toRadians); draw(p, g); restoreTransform(g)
-    case Scale(fx, fy, p) => saveTransform(g); g.scale(fx, fy); draw(p, g); restoreTransform(g)
+    case ScaleXY(fx, fy, p) => saveTransform(g); g.scale(fx, fy); draw(p, g); restoreTransform(g)
     case Stroke(c, p) => savePaint(g); g.setPaint(c); draw(p, g); restorePaint(g)
     case Fill(c, p) => savePaint(g); g.setPaint(brighten(c)); fill(p, g); restorePaint(g); draw(p, g)
     case Brighten(f, p) => pushBrighten(f); draw(p, g); popBrighten()
