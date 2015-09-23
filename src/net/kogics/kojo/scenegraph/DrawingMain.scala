@@ -17,7 +17,7 @@ package net.kogics.kojo.scenegraph
 
 import javax.swing.JFrame
 
-object Main {
+object DrawingMain {
   def main(args: Array[String]) {
     println("Welcome to the Kojo Scenegraph experiment.")
     println(s"Java version: ${System.getProperty("java.version")}")
@@ -34,8 +34,7 @@ object Main {
       println(s"Scene creation time: ${(t2 - t1) / 1e9}")
 
 
-      val renderer = new SwingRenderer
-      frame.getContentPane.add(renderer.canvas)
+      val renderer = new SwingRenderer(frame)
       renderer.render(sceneRoot)
       frame.setVisible(true)
     }

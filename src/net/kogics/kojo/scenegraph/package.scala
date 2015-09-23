@@ -15,6 +15,12 @@
 
 package net.kogics.kojo
 
+/**
+* Motivation for development:
+* - Rendering speed
+* - Memory reduction via immutability and structure sharing
+* - type safety
+*/
 package object scenegraph {
 
   trait AnyDrawing
@@ -29,20 +35,11 @@ package object scenegraph {
   type VectorPicture = Picture[VectorDrawing]
   type RasterPicture = Picture[RasterDrawing]
 
-  //  trait Picture {
-  //    type T
-  //  }
-  //
-  //  trait AnyPicture extends Picture {
-  //    type T = AnyDrawing
-  //  }
-  //
-  //  trait VectorPicture extends Picture {
-  //    type T = VectorDrawing
-  //  }
-  //
-  //  trait RasterPicture extends Picture {
-  //    type T = RasterDrawing
-  //  }
+  trait Renderer {
+    type PlatformGraphics
 
+    def render(p: AnyPicture)
+
+    def renderDirect(p: AnyPicture, g: PlatformGraphics)
+  }
 }
