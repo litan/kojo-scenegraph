@@ -20,13 +20,12 @@ import java.awt.Color
 import net.kogics.kojo.scenegraph.Utils._
 
 object TestDrawingDsl {
-  val noColor = new Color(0, 0, 0, 0)
   val size = 100
 
   def drawing0_0 = {
     val shape = PicShape.rect(size, size)
     //    val shape = PicShape.image("abc.png")
-    penColor(Color.yellow) * trans(-200, 0) -> shape
+    penColor(Color.yellow) * trans(100, -100) -> shape
     //    penColor(Color.yellow) -> (trans(-200, 0) -> shape)
   }
 

@@ -15,6 +15,8 @@
 
 package net.kogics.kojo
 
+import java.awt.Color
+
 /**
 * Motivation for development:
 * - Rendering speed
@@ -38,8 +40,8 @@ package object scenegraph {
   trait Renderer {
     type PlatformGraphics
 
-    def render(p: AnyPicture)
-
-    def renderDirect(p: AnyPicture, g: PlatformGraphics)
+    def render(p: AnyPicture, g: PlatformGraphics)
   }
+
+  val noColor = new Color(0, 0, 0, 0)
 }
