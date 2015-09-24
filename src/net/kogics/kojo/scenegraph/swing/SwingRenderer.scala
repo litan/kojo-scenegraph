@@ -13,50 +13,29 @@
  *
  */
 
-package net.kogics.kojo.scenegraph
+package net.kogics.kojo.scenegraph.swing
 
 import java.awt.geom.{AffineTransform, Ellipse2D, Rectangle2D}
-import java.awt.{BasicStroke, Color, Dimension, Graphics, Graphics2D, GraphicsEnvironment, Image, Paint, RenderingHints, Transparency}
-import javax.swing.{JFrame, JPanel}
+import java.awt.{BasicStroke, Color, Graphics, Graphics2D, GraphicsEnvironment, Image, Paint, RenderingHints, Transparency}
+
+import net.kogics.kojo.scenegraph._
 
 import scala.collection.mutable
 
-class SwingRenderer(frame: JFrame) extends Renderer {
+class SwingRenderer(width: Int, height: Int, useBb: Boolean) extends Renderer {
   type PlatformGraphics = Graphics
-  var root: AnyPicture = _
-  val cwidth = 1024
-  val cheight = 768
+  //  val bg = Color.white
   val bg = new Color(255, 170, 29)
   //    setBorder(BorderFactory.createLineBorder(Color.black))
-  val dims = new Dimension(cwidth, cheight)
   val stroke = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)
   val backBuffer: Image = {
     val graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment.
       getDefaultScreenDevice.getDefaultConfiguration
-    graphicsConfiguration.createCompatibleImage(cwidth, cheight, Transparency.TRANSLUCENT)
-    //      new BufferedImage(cwidth, cheight, BufferedImage.TYPE_INT_ARGB);
+    graphicsConfiguration.createCompatibleImage(width, height, Transparency.TRANSLUCENT)
+    //      new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
   }
 
-  val canvas = new JPanel {
-    override def getPreferredSize = dims
-
-    override def paintComponent(g: Graphics): Unit = {
-      drawComponent(g, true)
-    }
-  }
-  frame.getContentPane.add(canvas)
-
-  def render(p: AnyPicture): Unit = {
-    root = p
-    //    canvas.invalidate()
-  }
-
-  def renderDirect(p: AnyPicture, g: Graphics): Unit = {
-    root = p
-    drawComponent(g, false)
-  }
-
-  def drawComponent(g: Graphics, useBb: Boolean): Unit = {
+  def render(p: AnyPicture, g: Graphics): Unit = {
     val g2 = if (useBb) {
       backBuffer.getGraphics.asInstanceOf[Graphics2D]
     }
@@ -68,19 +47,20 @@ class SwingRenderer(frame: JFrame) extends Renderer {
     g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
     g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
     g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE)
+
     g2.setPaint(bg)
-    g2.fillRect(0, 0, cwidth, cheight)
+    g2.fillRect(0, 0, width, height)
     g2.setPaint(Color.black)
-    g2.translate(1024 / 2, 768 / 2)
+    g2.translate(width / 2, height / 2)
     g2.scale(1, -1)
     g2.setStroke(stroke)
     val t1 = System.nanoTime()
-    draw(root, g2)
+    draw(p, g2)
 
     if (useBb) {
       val g2o = g.asInstanceOf[Graphics2D]
       g2o.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
-      g2o.drawImage(backBuffer, 0, 0, cwidth, cheight, null)
+      g2o.drawImage(backBuffer, 0, 0, width, height, null)
     }
 
     val t2 = System.nanoTime()

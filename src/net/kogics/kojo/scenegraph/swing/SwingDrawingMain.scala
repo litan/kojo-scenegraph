@@ -13,29 +13,41 @@
  *
  */
 
-package net.kogics.kojo.scenegraph
+package net.kogics.kojo.scenegraph.swing
 
-import javax.swing.JFrame
+import java.awt.{Dimension, Graphics}
+import javax.swing.{JFrame, JPanel}
 
-object DrawingMain {
+import net.kogics.kojo.scenegraph.{TestDrawingDsl, Utils}
+
+object SwingDrawingMain {
   def main(args: Array[String]) {
-    println("Welcome to the Kojo Scenegraph experiment.")
+    println("Welcome to the Kojo Scenegraph Drawing App.")
     println(s"Java version: ${System.getProperty("java.version")}")
 
     Utils.runInSwingThread {
+      val width = 1024
+      val height = 768
       val frame = new JFrame("Kojo Scenegraph")
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
       frame.setSize(1024, 768)
 
-
       val t1 = System.nanoTime()
-      val sceneRoot = TestDrawingDsl.drawing1(15)
+      val sceneRoot = TestDrawingDsl.drawing1(21)
       val t2 = System.nanoTime()
       println(s"Scene creation time: ${(t2 - t1) / 1e9}")
 
+      val dims = new Dimension(width, height)
+      val renderer = new SwingRenderer(width, height, true)
+      val canvas = new JPanel {
+        override def getPreferredSize = dims
 
-      val renderer = new SwingRenderer(frame)
-      renderer.render(sceneRoot)
+        override def paintComponent(g: Graphics): Unit = {
+          renderer.render(sceneRoot, g)
+        }
+      }
+
+      frame.getContentPane.add(canvas)
       frame.setVisible(true)
     }
   }
