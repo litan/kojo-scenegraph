@@ -64,7 +64,7 @@ class SwingRenderer(width: Int, height: Int, useBb: Boolean) extends Renderer {
     }
 
     val t2 = System.nanoTime()
-    println(s"Scene rendering time: ${(t2 - t1) / 1e9}")
+    //    println(s"Scene rendering time: ${(t2 - t1) / 1e9}")
   }
 
   var rdCount = 0

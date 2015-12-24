@@ -34,3 +34,4 @@ lib/deploy.jar
 knabe/
 out
 *.iml
+.gitignore

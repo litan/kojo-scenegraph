@@ -26,9 +26,9 @@ import scala.collection.mutable
 
 class FxRenderer(width: Int, height: Int) extends Renderer {
   type PlatformGraphics = GraphicsContext
-  //  val bg = Color.WHITE
+  val bg = Color.WHITE
   //  val bg = Color.rgb(255, 170, 29)
-  val bg = Color.rgb(0, 0, 250, 20.0 / 255)
+  //  val bg = Color.rgb(0, 0, 250, 20.0 / 255)
 
   def render(p: AnyPicture, g2: GraphicsContext): Unit = {
     g2.clearRect(0, 0, width, height)
