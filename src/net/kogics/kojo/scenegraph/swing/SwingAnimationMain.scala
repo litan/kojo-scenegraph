@@ -31,7 +31,7 @@ object SwingAnimationMain {
 
     val env = GraphicsEnvironment.getLocalGraphicsEnvironment
     val device = env.getDefaultScreenDevice
-    val refreshRate = device.getDisplayMode.getRefreshRate
+    val refreshRate = device.getDisplayMode.getRefreshRate * 2
     println("Refresh rate: " + refreshRate)
     val gc = device.getDefaultConfiguration
     val bufCap = gc.getBufferCapabilities
@@ -47,8 +47,8 @@ object SwingAnimationMain {
     frame.createBufferStrategy(numBuffers)
     val bufferStrategy = frame.getBufferStrategy()
     println(bufferStrategy)
-    var sceneRoot: AnyPicture = trans(400, 0) * penColor(noColor) * fillColor(Color.blue) -> PicShape.rect(40, 40)
-    def translate(p: AnyPicture): AnyPicture = Translate(-5, 0, p)
+    var sceneRoot: AnyPicture = trans(400, 0) * penColor(noColor) * fillColor(Color.blue) -> PicShape.rect(200, 40)
+    def translate(p: AnyPicture): AnyPicture = Translate(-1, 0, p)
     var cnt = 0
     while (cnt < 200) {
       do {

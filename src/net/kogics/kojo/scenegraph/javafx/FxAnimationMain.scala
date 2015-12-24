@@ -2,8 +2,9 @@ package net.kogics.kojo.scenegraph.javafx
 
 import _root_.javafx.animation.AnimationTimer
 import _root_.javafx.application.Application
+import _root_.javafx.event.EventHandler
 import _root_.javafx.scene.canvas.Canvas
-import _root_.javafx.scene.input.KeyCombination
+import _root_.javafx.scene.input.MouseEvent
 import _root_.javafx.scene.paint.Color
 import _root_.javafx.scene.{Group, Scene}
 import _root_.javafx.stage.{Screen, Stage}
@@ -19,21 +20,23 @@ object FxAnimationMain {
 class FxAnimationMain extends Application {
   override def start(primaryStage: Stage) {
     primaryStage.setTitle("Rectangle Anime")
-    primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH)
-    primaryStage.setFullScreen(true)
+    //    primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH)
+    //    primaryStage.setFullScreen(true)
     init(primaryStage)
     primaryStage.show()
   }
 
   val screenSize = Screen.getPrimary.getVisualBounds
 
-  def translate(p: AnyPicture): AnyPicture = Translate(-5, 0, p)
+  def translate(p: AnyPicture, deltaFactor: Double): AnyPicture = Translate(-3 * deltaFactor, 0, p)
 
   def init(stage: Stage) {
     stage.setScene(scene(screenSize.getWidth, screenSize.getHeight))
 
-    def tick(): Unit = {
-      pic = translate(pic)
+    def tick(delta: Double): Unit = {
+      val df = delta / 16
+      //      println(df)
+      pic = translate(pic, df)
       gc.save()
       renderer.render(pic, gc)
       gc.restore()
@@ -53,8 +56,12 @@ class FxAnimationMain extends Application {
 
 
     val timer = new AnimationTimer {
+      var prev = System.nanoTime()
+
       def handle(t: Long): Unit = {
-        tick()
+        //        println((t - prev) / 1e6)
+        tick((t - prev) / 1e6)
+        prev = t
       }
     }
     timer.start()
@@ -72,10 +79,16 @@ class FxAnimationMain extends Application {
     scene.setRoot(root)
   }
 
-  var pic: AnyPicture = trans(400, 0) * penColor(java.awt.Color.lightGray) * fillColor(new java.awt.Color(0, 230, 0)) -> PicShape.circle(15)
+  var pic: AnyPicture = trans(400, 0) * penColor(noColor) * fillColor(java.awt.Color.blue) -> PicShape.rect(200, 40)
   val canvas = new Canvas(screenSize.getWidth, screenSize.getHeight)
   val gc = canvas.getGraphicsContext2D
   val renderer = new FxRenderer(screenSize.getWidth.toInt, screenSize.getHeight.toInt)
+  canvas.setOnMouseClicked(new EventHandler[MouseEvent] {
+    override def handle(event: MouseEvent): Unit = {
+      println("\nBam!\n")
+      System.exit(0)
+    }
+  })
 
   def populateScene(scene: Scene, width: Double, height: Double) {
     val root = new Group
